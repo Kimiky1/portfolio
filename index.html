@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kim Merer Levi | Unity Technical Artist</title>
+<meta name="description" content="Kim Merer Levi, Unity Technical Artist. Real-time VFX, shaders, lighting, UI and performance for mobile and PC games.">
+<meta property="og:title" content="Kim Merer Levi | Unity Technical Artist">
+<meta property="og:description" content="I make games look expensive and run on anything.">
+<meta property="og:image" content="assets/Sigil%20hero%20poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/Sigil%20hero%20poster.jpg">
+<style>
+  /* Palette: Slate Blue & Silver-Gray.
+     60% charcoal black, 30% Cool Steel Gray, 10% Ice Blue. Dark theme is locked: game art reads best on dark. */
+  :root{
+    --navy:#0c0d0f;        /* primary 60%: charcoal black */
+    --midnight:#08090a;    /* neutral dark */
+    --steel:#5A6B82;       /* secondary 30%: lines, surfaces, chips */
+    --ice:#89CFF0;         /* accent 10% */
+    --platinum:#A3B8CC;    /* muted text */
+    --white:#F8FAFC;       /* neutral light */
+
+    --bg:var(--navy); --bg-2:#121417; --bg-3:#181b1f;
+    --text:var(--white); --muted:var(--platinum); --faint:#7f858d;
+    --line:rgba(90,107,130,.38); --line-2:rgba(163,184,204,.45);
+    --accent:var(--ice); --accent-ink:var(--midnight);
+    --r:16px;
+    --ease:cubic-bezier(.16,1,.3,1);
+    --display:"Bricolage Grotesque",system-ui,sans-serif;
+    --body:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Geist Mono",ui-monospace,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:var(--body); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased}
+  a{color:inherit; text-decoration:none}
+  img,video{display:block; max-width:100%}
+  button{font:inherit; color:inherit}
+  .wrap{max-width:1280px; margin:0 auto; padding:0 32px}
+  @media(max-width:767px){ .wrap{padding:0 16px} }
+
+  body::after{content:""; position:fixed; inset:0; z-index:40; pointer-events:none; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* buttons are always pills; media and panels are 16px */
+  .btn{display:inline-flex; align-items:center; gap:10px; white-space:nowrap; font:500 15px/1 var(--body);
+    padding:15px 24px; border-radius:999px; border:1px solid var(--line-2); color:var(--text);
+    background:rgba(8,9,10,.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    transition:transform .35s var(--ease), background .25s, border-color .25s}
+  .btn:hover{border-color:var(--text); transform:translateY(-2px)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600}
+  .btn.primary:hover{background:#a6dcf5; border-color:#a6dcf5}
+  .btn .arr{transition:transform .35s var(--ease)}
+  .btn:hover .arr{transform:translateX(3px)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+
+  header{position:fixed; inset:0 0 auto; z-index:30; transition:background .3s, border-color .3s; border-bottom:1px solid transparent}
+  header.solid{background:rgba(8,9,10,.85); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-color:var(--line)}
+  .nav{display:flex; align-items:center; justify-content:space-between; height:76px}
+  .nav .name{font:800 24px/1 var(--display); letter-spacing:-.02em}
+  .nav .links{display:flex; align-items:center; gap:32px; font-size:16px; font-weight:500; color:var(--muted)}
+  .nav .links a:not(.btn):hover{color:var(--text)}
+  .nav .btn{padding:11px 20px; font-size:16px}
+  @media(max-width:640px){ .nav .name{font-size:20px} }
+  @media(max-width:640px){ .nav .links a:not(.btn){display:none} }
+
+  /* hero */
+  .hero{position:relative; min-height:100dvh; display:flex; align-items:flex-end; overflow:hidden; isolation:isolate}
+  .hero-media{position:absolute; inset:0; z-index:-2; background:var(--midnight) url("assets/Sigil%20hero%20poster.jpg") center/cover}
+  .hero-media video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
+  .hero-media video.on{opacity:1}
+  .hero::before{content:""; position:absolute; inset:0; z-index:-1;
+    background:
+      linear-gradient(180deg, rgba(8,9,10,.6) 0%, rgba(8,9,10,0) 22%),
+      linear-gradient(0deg, var(--bg) 0%, rgba(12,13,15,.88) 26%, rgba(12,13,15,.22) 62%, rgba(12,13,15,0) 80%),
+      linear-gradient(90deg, rgba(8,9,10,.72) 0%, rgba(8,9,10,0) 60%)}
+  .hero-inner{width:100%; padding-bottom:clamp(48px,9vh,96px)}
+  .eyebrow{font:500 13px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 22px}
+  .hero h1{font:800 clamp(42px,6.6vw,96px)/.98 var(--display); letter-spacing:-.035em; margin:0; max-width:15ch; text-wrap:balance}
+  .hero h1 em{font-style:normal; color:var(--accent)}
+  .hero .sub{font-size:clamp(16px,1.5vw,19px); color:#cfdbe6; max-width:46ch; margin:26px 0 34px}
+  .hero .cta{display:flex; flex-wrap:wrap; gap:12px}
+  .hero-credit{position:absolute; right:32px; bottom:clamp(48px,9vh,96px); font:400 12px/1.4 var(--mono); color:var(--faint); text-align:right}
+  .hero-credit b{display:block; color:var(--muted); font-weight:500}
+  @media(max-width:900px){ .hero-credit{display:none} }
+
+  @media (prefers-reduced-motion:no-preference){
+    .rise{opacity:0; transform:translateY(22px); animation:rise .9s var(--ease) forwards}
+    .d1{animation-delay:.1s} .d2{animation-delay:.22s} .d3{animation-delay:.36s} .d4{animation-delay:.5s}
+    @keyframes rise{to{opacity:1; transform:none}}
+    .reveal{opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease)}
+    .reveal.in{opacity:1; transform:none}
+  }
+
+  /* clients: logo + name */
+  .clients{padding:40px 0; border-bottom:1px solid var(--line)}
+  .clients .row{display:flex; flex-wrap:wrap; align-items:center; gap:18px 40px}
+  .clients .lbl{font-size:14px; color:var(--faint); margin-right:4px}
+  .co{display:inline-flex; align-items:center; gap:12px; font:700 clamp(19px,2vw,25px)/1 var(--display); letter-spacing:-.02em; color:#dbe5ee}
+  .co img{width:36px; height:36px; border-radius:9px; object-fit:contain; background:var(--white); padding:3px}
+  .co img.full{padding:0; object-fit:cover; background:var(--bg-3)}
+
+  section{padding:clamp(72px,11vw,140px) 0}
+  .h2{font:800 clamp(32px,4.4vw,60px)/1.02 var(--display); letter-spacing:-.03em; margin:0 0 18px; max-width:18ch}
+  .lede{color:var(--muted); max-width:58ch; margin:0}
+
+  /* GAME BY GAME */
+  .gx{display:grid; grid-template-columns:300px minmax(0,1fr); gap:40px; margin-top:56px; align-items:start}
+  .gx-tabs{display:flex; flex-direction:column; gap:6px; position:sticky; top:96px}
+  .gx-tab{display:flex; align-items:center; gap:14px; width:100%; text-align:left; cursor:pointer;
+    padding:12px 14px; border-radius:var(--r); border:1px solid transparent; background:transparent; transition:background .25s, border-color .25s}
+  .gx-tab img{width:48px; height:48px; border-radius:12px; object-fit:cover; flex:none; background:var(--bg-3)}
+  .gx-tab b{display:block; font:700 18px/1.15 var(--display); letter-spacing:-.01em}
+  .gx-tab span{display:block; font:400 12.5px/1.3 var(--mono); color:var(--faint); margin-top:3px}
+  .gx-tab:hover{background:var(--bg-2)}
+  .gx-tab[aria-selected="true"]{background:var(--bg-3); border-color:var(--line-2)}
+  .gx-tab[aria-selected="true"] span{color:var(--accent)}
+
+  .gx-panel{animation:none}
+  @media (prefers-reduced-motion:no-preference){ .gx-panel.show{animation:panel .55s var(--ease)} @keyframes panel{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}} }
+  .gx-media{position:relative; aspect-ratio:16/9; border-radius:var(--r); overflow:hidden; background:var(--bg-3); border:1px solid var(--line)}
+  .gx-media video{width:100%; height:100%; object-fit:cover; background:var(--midnight)}
+  .gx-media .slides > *{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .7s}
+  .gx-media .slides > .on{opacity:1}
+  .gx-media.icon{display:grid; place-items:center; background:radial-gradient(60% 85% at 50% 45%, var(--glow) 0%, rgba(24,27,31,0) 70%), var(--bg-3)}
+  .gx-media.icon img{width:30%; aspect-ratio:1; border-radius:22%; box-shadow:0 30px 60px -20px rgba(0,0,0,.7)}
+  .gx-media .note{position:absolute; left:0; right:0; bottom:18px; text-align:center; font:400 13px/1 var(--mono); color:var(--faint)}
+
+  .gx-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:40px; margin-top:32px}
+  .gx-meta{font:500 13px/1.4 var(--mono); color:var(--faint); margin:0 0 14px}
+  .gx-meta em{font-style:normal; color:var(--accent)}
+  .gx-body h3{font:800 clamp(32px,3.4vw,46px)/1 var(--display); letter-spacing:-.03em; margin:0 0 14px}
+  .gx-body p{color:var(--muted); margin:0 0 22px}
+  .did{font:500 13px/1 var(--mono); color:var(--faint); margin:6px 0 16px}
+  .gx-list{list-style:none; padding:0; margin:0; display:grid; gap:14px}
+  .gx-list li{padding-left:24px; position:relative}
+  .gx-list li::before{content:""; position:absolute; left:0; top:.72em; width:12px; height:2px; background:var(--accent)}
+  @media(max-width:960px){
+    .gx{grid-template-columns:1fr; gap:24px}
+    .gx-tabs{position:static; flex-direction:row; overflow-x:auto; scroll-snap-type:x mandatory; gap:8px; padding-bottom:6px; margin:0 -16px; padding-left:16px; padding-right:16px}
+    .gx-tab{flex:none; width:auto; scroll-snap-align:start; border-color:var(--line)}
+    .gx-tab img{width:36px; height:36px; border-radius:9px}
+    .gx-tab span{display:none}
+    .gx-body{grid-template-columns:1fr; gap:8px}
+  }
+
+  /* per-booster breakdown under a game panel */
+  .boosters{margin-top:40px; padding-top:28px; border-top:1px solid var(--line)}
+  .boosters .did{margin-top:0}
+  .boosters{display:grid; grid-template-columns:1fr 1fr; column-gap:36px}
+  .boosters .did{grid-column:1 / -1}
+  .bst{padding:18px 0 22px; border-top:1px solid var(--line)}
+  .bst:nth-of-type(1),.bst:nth-of-type(2){border-top:0; padding-top:4px}
+  .bst h4{font:700 20px/1.2 var(--display); letter-spacing:-.01em; margin:0 0 8px; display:flex; align-items:center; gap:10px}
+  .bst h4::before{content:""; width:8px; height:8px; border-radius:2px; background:var(--accent); flex:none}
+  .bst p{margin:0; color:var(--muted); font-size:15px}
+  @media(max-width:700px){
+    .boosters{grid-template-columns:1fr}
+    .bst:nth-of-type(2){border-top:1px solid var(--line); padding-top:18px}
+  }
+
+  /* numbers band */
+  .stats{border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(137,207,240,.04), transparent)}
+  .stats-row{display:grid; grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stat{padding:48px 24px 46px 0; display:flex; flex-direction:column; gap:10px}
+  .stat + .stat{padding-left:36px; border-left:1px solid var(--line)}
+  .stat b{font:800 clamp(64px,8vw,112px)/.95 var(--display); letter-spacing:-.045em; color:var(--text)}
+  .stat span{font-size:clamp(17px,1.6vw,21px); font-weight:500; color:var(--muted); max-width:22ch}
+  @media(max-width:767px){
+    .stats-row{grid-template-columns:1fr}
+    .stat,.stat + .stat{padding:26px 0; border-left:0; flex-direction:row; align-items:baseline; gap:16px}
+    .stat + .stat{border-top:1px solid var(--line)}
+  }
+
+  /* moments grid: wide tiles span two columns, so each row mixes one wide and two square */
+  .moments{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-rows:clamp(200px,24vw,300px); gap:16px; margin-top:44px}
+  .mo{position:relative; margin:0; border-radius:var(--r); overflow:hidden; background:var(--bg-3); border:1px solid var(--line)}
+  .mo.wide{grid-column:span 2}
+  .mo video{width:100%; height:100%; object-fit:cover; transition:transform .8s var(--ease)}
+  .mo:hover video{transform:scale(1.04)}
+  .mo figcaption{position:absolute; left:0; right:0; bottom:0; padding:40px 16px 14px; font-size:13px; color:var(--muted);
+    background:linear-gradient(0deg, rgba(8,9,10,.85), rgba(8,9,10,0))}
+  .mo figcaption b{display:block; font:700 17px/1.2 var(--display); color:var(--text); margin-bottom:2px}
+  @media(max-width:767px){
+    .moments{grid-template-columns:1fr 1fr; grid-auto-rows:180px; gap:10px}
+    .mo.wide{grid-column:span 2}
+  }
+
+  /* reel */
+  .reel{position:relative; aspect-ratio:16/9; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); margin-top:40px; background:var(--midnight)}
+  .reel iframe,.reel video{position:absolute; inset:0; width:100%; height:100%; border:0}
+
+  /* craft */
+  .craft{display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr); gap:64px; align-items:start}
+  .craft .sticky{position:sticky; top:110px}
+  .skills{display:grid; grid-template-columns:1fr 1fr}
+  .skill{padding:30px 28px 34px 0; border-top:1px solid var(--line)}
+  .skill:nth-child(odd){padding-right:36px}
+  .skill h3{font:700 22px/1.15 var(--display); letter-spacing:-.02em; margin:0 0 10px}
+  .skill p{margin:0; color:var(--muted); font-size:15px}
+  .tools{margin-top:34px; display:flex; flex-wrap:wrap; gap:8px}
+  .tools span{font:400 13px/1 var(--mono); color:var(--platinum); border:1px solid var(--line); border-radius:999px; padding:9px 14px; background:rgba(90,107,130,.12)}
+  @media(max-width:900px){ .craft{grid-template-columns:1fr; gap:24px} .craft .sticky{position:static} }
+  @media(max-width:600px){ .skills{grid-template-columns:1fr} .skill,.skill:nth-child(odd){padding-right:0} }
+
+  footer{position:relative; padding:clamp(80px,12vw,150px) 0 40px; background:var(--midnight); border-top:1px solid var(--line); overflow:hidden}
+  footer::before{content:""; position:absolute; left:50%; top:-40%; width:900px; height:600px; transform:translateX(-50%);
+    background:radial-gradient(closest-side, rgba(137,207,240,.12), transparent); pointer-events:none}
+  .big{font:800 clamp(40px,7vw,104px)/.98 var(--display); letter-spacing:-.04em; margin:0 0 30px; max-width:13ch}
+  .mail{display:inline-block; font:700 clamp(22px,3vw,40px)/1.1 var(--display); letter-spacing:-.02em; color:var(--accent);
+    border-bottom:2px solid rgba(137,207,240,.35); padding-bottom:4px; transition:border-color .3s}
+  .mail:hover{border-color:var(--accent)}
+  .foot-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:40px}
+  .fine{display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-top:110px; padding-top:24px; border-top:1px solid var(--line); color:var(--faint); font-size:13px}
+</style>
+</head>
+<body>
+
+<header id="top">
+  <div class="wrap nav">
+    <a class="name" href="#">Kim Merer Levi</a>
+    <nav class="links">
+      <a href="#games">Games</a>
+      <a href="#reel">Reel</a>
+      <a href="#craft">Craft</a>
+      <a class="btn" href="mailto:kimiky11@gmail.com">Email me</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding:0">
+    <div class="hero-media" aria-hidden="true">
+      <video muted playsinline preload="auto" src="assets/Sigil%2001_morvane_dread_nova.mp4"></video>
+      <video muted playsinline preload="metadata" src="assets/Sigil%2002_hekt_arrives.mp4"></video>
+      <video muted playsinline preload="metadata" src="assets/Sigil%2004_brakka_forked_storm.mp4"></video>
+    </div>
+    <div class="wrap hero-inner">
+      <p class="eyebrow rise">Unity Technical Artist</p>
+      <h1 class="rise d1">I make games look expensive and <em>run on anything.</em></h1>
+      <p class="sub rise d2">VFX, shaders, lighting and UI. 23 shipped titles across mobile and Steam, now building a 3D RPG.</p>
+      <div class="cta rise d3">
+        <a class="btn primary" href="#games">See the games <span class="arr">&rarr;</span></a>
+        <a class="btn" href="mailto:kimiky11@gmail.com">Email me</a>
+      </div>
+    </div>
+    <p class="hero-credit rise d4"><b>Sigilbound</b>in-game footage</p>
+  </section>
+
+  <!-- Logos live in assets/logos/. A missing file just hides its image. -->
+  <div class="clients">
+    <div class="wrap row reveal">
+      <span class="lbl">Shipped with</span>
+      <span class="co"><img src="assets/logos/crazylabs.png" alt="" onerror="this.remove()">Crazy Labs</span>
+      <span class="co"><img class="full" src="assets/logos/voodoo.png" alt="" onerror="this.remove()">Voodoo</span>
+      <span class="co"><img class="full" src="assets/logos/wizplay.png" alt="" onerror="this.remove()">WizPlay</span>
+      <span class="co"><img class="full" src="assets/Hoppa_Play%20Icon.png" alt="" onerror="this.remove()">Hoppa Play</span>
+      <span class="co"><img src="assets/logos/cloverbite.png" alt="" onerror="this.remove()">Clover Bite</span>
+    </div>
+  </div>
+
+  <!-- Numbers -->
+  <div class="stats">
+    <div class="wrap stats-row">
+      <div class="stat reveal"><b data-count="23">23</b><span>shipped titles</span></div>
+      <div class="stat reveal"><b data-count="5">5</b><span>years in production</span></div>
+      <div class="stat reveal"><b data-count="5">5</b><span>studios and publishers</span></div>
+    </div>
+  </div>
+
+  <!-- GAME BY GAME: newest first -->
+  <section id="games">
+    <div class="wrap">
+      <h2 class="h2 reveal">Game by game</h2>
+      <p class="lede reveal">What I built on each one, with footage from the game.</p>
+
+      <div class="gx reveal">
+        <div class="gx-tabs" role="tablist" aria-label="Games">
+          <button class="gx-tab" role="tab" aria-selected="true" aria-controls="p-sigil" id="t-sigil"><img src="assets/Sigilbound%20Logo.png" alt="" style="object-fit:contain; padding:4px"><div><b>Sigilbound</b><span>Steam, coming soon</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-smash" id="t-smash"><img src="assets/Smash%20Hole%20Icon.png" alt=""><div><b>Smash Hole</b><span>WizPlay</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-blast" id="t-blast"><img src="assets/Pinata%20Blast%20Icon.jpg" alt=""><div><b>Pinata Blast</b><span>WizPlay</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-oh" id="t-oh"><img src="assets/Overlord%27s%20Game%20Icon.png" alt="" style="object-fit:contain; padding:3px"><div><b>Overlords Harvest</b><span>Steam</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-void" id="t-void"><img src="assets/Voidmancer%20Game%20Icon.png" alt=""><div><b>Voidmancer</b><span>Google Play</span></div></button>
+        </div>
+
+        <div>
+          <!-- Sigilbound -->
+          <article class="gx-panel show" role="tabpanel" id="p-sigil" aria-labelledby="t-sigil">
+            <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/Breakdown%20Sigilbound.jpg" src="assets/Breakdown%20Sigilbound.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Coming soon</em> on Steam<br>Co-creator, art and tech-art lead</p>
+                <h3>Sigilbound</h3>
+                <p>A 3D hero-collector RPG built at Broken Adventure. I own how it looks and how it feels to play.</p>
+                <a class="btn primary" href="https://store.steampowered.com/app/5433810/Sigilbound/" target="_blank" rel="noopener">Wishlist on Steam <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Art direction and the look of every arena, chapter and dungeon</li>
+                  <li>Skill, boss and status VFX, plus the combat feel pass</li>
+                  <li>Lighting and post-processing across every scene</li>
+                  <li>Hub, battle HUD, recruit board and menus in uGUI</li>
+                  <li>Trailers, shorts and the Steam store page</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Smash Hole -->
+          <article class="gx-panel" role="tabpanel" id="p-smash" aria-labelledby="t-smash" hidden>
+            <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/Breakdown%20Smash%20Hole.jpg" src="assets/Breakdown%20Smash%20Hole.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>WizPlay</em> on Google Play<br>Technical Artist</p>
+                <h3>Smash Hole</h3>
+                <p>Fire balls at a voxel pinata and knock the pieces into the hole.</p>
+                <a class="btn" href="https://play.google.com/store/apps/details?id=com.wizplay.smash3d" target="_blank" rel="noopener">View on Google Play <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Voxel destruction with no physics: chunks and particle debris that stay cheap on phones</li>
+                  <li>Voxel types and materials, including glass shatter, TNT chains and iron</li>
+                  <li>Booster buttons, counts and the timer meter in the HUD</li>
+                  <li>End-level payout: leftover balls turn into coins that fly to your balance</li>
+                </ul>
+              </div>
+            </div>
+            <div class="boosters">
+              <p class="did">The boosters, start to finish</p>
+              <div class="bst">
+                <h4>Infinite Balls</h4>
+                <p>A timed window where the cannon fires with no ammo cost and no cooldown. I built the whole sequence: the banner with its countdown bar, the cannon turning gold, rapid fire, and the timer meter on the button.</p>
+              </div>
+              <div class="bst">
+                <h4>Wider Hole</h4>
+                <p>The hole grows for the rest of the level and gets a golden rim. Pieces already sitting in the bowl refit to the new size, so nothing pops or falls through.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Pinata Blast -->
+          <article class="gx-panel" role="tabpanel" id="p-blast" aria-labelledby="t-blast" hidden>
+            <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/Breakdown%20Pinata%20Blast.jpg" src="assets/Breakdown%20Pinata%20Blast.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>WizPlay</em> on Google Play<br>Technical Artist</p>
+                <h3>Pinata Blast</h3>
+                <p>A bright shooter puzzle game about blasting apart pinatas made of cubes.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:10px">
+                  <a class="btn" href="https://play.google.com/store/apps/details?id=com.wizplay.blast3d" target="_blank" rel="noopener">Google Play <span class="arr">&nearr;</span></a>
+                  <a class="btn" href="https://apps.apple.com/app/pinata-blast/id6809380291" target="_blank" rel="noopener">App Store <span class="arr">&nearr;</span></a>
+                </div>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Crack stages for large cubes and ice cubes</li>
+                  <li>Environment lighting and per-level colour palettes</li>
+                  <li>Animation and FX for every booster, from button tap to the last debris</li>
+                  <li>Gift opening at level end, with three looks and three candy bursts</li>
+                </ul>
+              </div>
+            </div>
+            <div class="boosters">
+              <p class="did">The boosters, start to finish</p>
+              <div class="bst">
+                <h4>Super Shooter</h4>
+                <p>The full hero sequence: a crouch, a stretched jump, a turn and a landing shockwave, then the whirlpool that pulls in every pixel of the picked colour. A gold barrel glow and a flying cape, and he winks before he vanishes.</p>
+              </div>
+              <div class="bst">
+                <h4>Pinata Bat</h4>
+                <p>The bat flies in from the camera, winds up and swings right-handed into the pinata. A lattice stretches it with swing speed and whips it on impact, and the hit-stop, shake and screen punch land after the freeze.</p>
+              </div>
+              <div class="bst">
+                <h4>UFO</h4>
+                <p>Pick mode: the scene dims, the closed shooters open for a look, and a prompt bubble pops in. The UFO then carries the picked shooter to its slot.</p>
+              </div>
+              <div class="bst">
+                <h4>Unlock reveal</h4>
+                <p>Shared by all three. The tile pops in over turning rays, flies a sparkle arc to its button, and lands with a punch, an edge flash, a ring and a burst.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Overlords Harvest -->
+          <article class="gx-panel" role="tabpanel" id="p-oh" aria-labelledby="t-oh" hidden>
+            <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/Breakdown%20Overlords.jpg" src="assets/Breakdown%20Overlords.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Steam</em><br>Solo developer</p>
+                <h3>Overlords Harvest</h3>
+                <p>A dark horde game where you play the overlord. My first Steam release, made alone.</p>
+                <a class="btn" href="https://store.steampowered.com/app/4035610/Overlords_Harvest/" target="_blank" rel="noopener">View on Steam <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Designed and built the whole game in Unity</li>
+                  <li>Big hordes on screen with the spell and summoning-circle VFX</li>
+                  <li>Talent tree, Hellforge and relic screens</li>
+                  <li>The full Steam release: store page, builds and launch</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Voidmancer -->
+          <article class="gx-panel" role="tabpanel" id="p-void" aria-labelledby="t-void" hidden>
+            <div class="gx-media" data-slides>
+              <div class="slides">
+                <img src="assets/Void%20Image1.jpg" alt="Voidmancer gameplay" loading="lazy">
+                <img src="assets/Void%20Image2.jpg" alt="Voidmancer gameplay" loading="lazy">
+                <img src="assets/Void%20Image3.png" alt="Voidmancer gameplay" loading="lazy">
+              </div>
+            </div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Google Play</em><br>Co-creator, technical artist</p>
+                <h3>Voidmancer</h3>
+                <p>The breakout mobile title that launched the Hoppa Play label, made with my long-time development partner.</p>
+                <a class="btn" href="https://play.google.com/store/apps/details?id=com.ek.mgq&amp;hl=en" target="_blank" rel="noopener">View on Google Play <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>All VFX and shaders</li>
+                  <li>UI tech and screen flow</li>
+                  <li>Mobile optimization: smaller builds and lower texture memory</li>
+                  <li>Juice and polish on every core interaction</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOMENTS: short silent loops that play while on screen -->
+  <section id="moments" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="h2 reveal">Moments I built</h2>
+      <p class="lede reveal">The few seconds a player remembers. Each one is my animation, FX and timing.</p>
+      <div class="moments">
+        <figure class="mo wide reveal"><video muted playsinline loop preload="none" poster="assets/moments/sigil.jpg" src="assets/moments/sigil.mp4"></video><figcaption><b>Dread Nova</b>Sigilbound skill VFX</figcaption></figure>
+        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/super.jpg" src="assets/moments/super.mp4"></video><figcaption><b>Super Shooter</b>Pinata Blast hero sequence</figcaption></figure>
+        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/bat.jpg" src="assets/moments/bat.mp4"></video><figcaption><b>Pinata Bat</b>Swing, stretch and hit-stop</figcaption></figure>
+        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/ufo.jpg" src="assets/moments/ufo.mp4"></video><figcaption><b>UFO</b>Pick mode and carry</figcaption></figure>
+        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/infinite.jpg" src="assets/moments/infinite.mp4"></video><figcaption><b>Infinite Balls</b>Smash Hole booster</figcaption></figure>
+        <figure class="mo wide reveal"><video muted playsinline loop preload="none" poster="assets/moments/horde.jpg" src="assets/moments/horde.mp4"></video><figcaption><b>The horde</b>Overlords Harvest spells</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- REEL: plays assets/Showreel.mp4 if present, or a YouTube video if REEL_ID is set -->
+  <section id="reel" hidden style="padding-top:0">
+    <div class="wrap">
+      <h2 class="h2 reveal">Showreel</h2>
+      <div class="reel reveal" id="reel-frame"></div>
+    </div>
+  </section>
+
+  <section id="craft" style="border-top:1px solid var(--line)">
+    <div class="wrap craft">
+      <div class="sticky reveal">
+        <h2 class="h2">The art, and the frame rate.</h2>
+        <p class="lede">Five years between artists and programmers. I make the effect, then make it cheap enough to ship.</p>
+      </div>
+      <div>
+        <div class="skills">
+          <div class="skill reveal"><h3>Real-time VFX</h3><p>Hits, spells, pickups and the juice between them, with Shuriken and VFX Graph.</p></div>
+          <div class="skill reveal"><h3>Shaders and UI</h3><p>Shader Graph and HLSL for stylized surfaces, 2D and UI. Menus that move like the game does.</p></div>
+          <div class="skill reveal"><h3>Lighting and look</h3><p>Lighting, post and colour that hold one mood across a whole game.</p></div>
+          <div class="skill reveal"><h3>Performance</h3><p>Smaller builds, fewer draw calls and a steady frame rate on low-end phones.</p></div>
+        </div>
+        <div class="tools reveal">
+          <span>Unity URP</span><span>C#</span><span>Shader Graph</span><span>VFX Graph</span><span>Blender</span><span>Photoshop</span><span>Profiler</span><span>Git</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2 class="big reveal">Open to relocation, or remote.</h2>
+    <a class="mail reveal" href="mailto:kimiky11@gmail.com">kimiky11@gmail.com</a>
+    <div class="foot-row reveal">
+      <a class="btn" href="https://www.linkedin.com/in/kim-merer-levi/" target="_blank" rel="noopener">LinkedIn <span class="arr">&nearr;</span></a>
+      <a class="btn" id="resume-btn" href="resume.pdf" target="_blank" rel="noopener" hidden>Résumé (PDF) <span class="arr">&darr;</span></a>
+    </div>
+    <div class="fine">
+      <span>&copy; <span id="yr">2026</span> Kim Merer Levi</span>
+      <span>Based in Israel. Moving to Thailand.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Optional: a YouTube id (the part after watch?v=). Used only if assets/Showreel.mp4 isn't there.
+  var REEL_ID = "";
+  var REEL_FILE = "assets/Showreel.mp4";
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  var header = document.getElementById("top");
+  var hero = document.querySelector(".hero");
+  new IntersectionObserver(function(e){ header.classList.toggle("solid", !e[0].isIntersecting); },
+    {rootMargin:"-68px 0px 0px 0px"}).observe(hero);
+
+  var rev = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); rev.unobserve(e.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll(".reveal").forEach(function(el){ rev.observe(el); });
+
+  function playSafe(v){ try{ v.currentTime = 0; var p = v.play(); if(p && p.catch) p.catch(function(){}); }catch(e){} }
+
+  // hero: chain the clips
+  var heroVids = Array.prototype.slice.call(document.querySelectorAll(".hero-media video"));
+  if(!reduce){
+    var hi = -1, live = false, ht = null;
+    function heroShow(n){
+      hi = n; clearTimeout(ht);
+      heroVids.forEach(function(v, k){ v.classList.toggle("on", k === n); if(k !== n){ try{ v.pause(); }catch(e){} } });
+      var v = heroVids[n];
+      v.onended = function(){ if(live) heroShow((hi + 1) % heroVids.length); };
+      playSafe(v);
+      ht = setTimeout(function(){ if(live) heroShow((hi + 1) % heroVids.length); }, 8000);
+    }
+    new IntersectionObserver(function(e){
+      if(e[0].isIntersecting){ live = true; heroShow(hi < 0 ? 0 : hi); }
+      else { live = false; clearTimeout(ht); heroVids.forEach(function(v){ try{ v.pause(); }catch(x){} }); }
+    }, {threshold:.2}).observe(hero);
+  }
+
+  // Voidmancer stills: crossfade while its panel is open
+  var slideTimer = null;
+  function startSlides(panel){
+    stopSlides();
+    var box = panel.querySelector("[data-slides]");
+    if(!box) return;
+    var s = box.querySelectorAll(".slides > *"), i = 0;
+    s.forEach(function(el, k){ el.classList.toggle("on", k === 0); });
+    if(reduce) return;
+    slideTimer = setInterval(function(){ s[i].classList.remove("on"); i = (i + 1) % s.length; s[i].classList.add("on"); }, 2400);
+  }
+  function stopSlides(){ if(slideTimer){ clearInterval(slideTimer); slideTimer = null; } }
+
+  // game tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".gx-tab"));
+  var gx = document.querySelector(".gx");
+  var gxVisible = false;
+  function activePanel(){ return document.querySelector(".gx-panel:not([hidden])"); }
+  function autoplay(panel){
+    var v = panel.querySelector("video");
+    if(v && gxVisible && !reduce){ var p = v.play(); if(p && p.catch) p.catch(function(){}); }
+  }
+  function select(tab, focus){
+    tabs.forEach(function(t){
+      var on = t === tab;
+      t.setAttribute("aria-selected", on);
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.getAttribute("aria-controls"));
+      p.hidden = !on;
+      p.classList.toggle("show", on);
+      if(!on){ var v = p.querySelector("video"); if(v){ try{ v.pause(); }catch(e){} } }
+    });
+    var panel = document.getElementById(tab.getAttribute("aria-controls"));
+    startSlides(panel); autoplay(panel);
+    if(focus) tab.focus();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener("click", function(){ select(t); });
+    t.addEventListener("keydown", function(e){
+      var n = null;
+      if(e.key === "ArrowDown" || e.key === "ArrowRight") n = tabs[(i + 1) % tabs.length];
+      if(e.key === "ArrowUp" || e.key === "ArrowLeft") n = tabs[(i - 1 + tabs.length) % tabs.length];
+      if(n){ e.preventDefault(); select(n, true); }
+    });
+  });
+  new IntersectionObserver(function(e){
+    gxVisible = e[0].isIntersecting;
+    var p = activePanel(), v = p && p.querySelector("video");
+    if(gxVisible){ autoplay(p); } else if(v){ try{ v.pause(); }catch(x){} }
+  }, {threshold:.35}).observe(gx);
+
+  // moments: each loop plays only while it is on screen
+  if(!reduce){
+    var mo = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        var v = e.target;
+        if(e.isIntersecting){ var p = v.play(); if(p && p.catch) p.catch(function(){}); }
+        else { try{ v.pause(); }catch(x){} }
+      });
+    }, {threshold:.4});
+    document.querySelectorAll(".mo video").forEach(function(v){ mo.observe(v); });
+  }
+
+  // stats: count up once when the band scrolls in
+  var stats = document.querySelector(".stats");
+  if(stats && !reduce){
+    var counted = false;
+    new IntersectionObserver(function(e){
+      if(!e[0].isIntersecting || counted) return;
+      counted = true;
+      stats.querySelectorAll("[data-count]").forEach(function(el){
+        var end = +el.getAttribute("data-count"), t0 = performance.now(), dur = 900;
+        (function step(now){
+          var k = Math.min(1, (now - t0) / dur), eased = 1 - Math.pow(1 - k, 3);
+          el.textContent = Math.round(end * eased);
+          if(k < 1) requestAnimationFrame(step);
+        })(t0);
+      });
+    }, {threshold:.5}).observe(stats);
+  }
+
+  // reel: local file first, YouTube as a fallback
+  function showReel(html){
+    document.getElementById("reel").hidden = false;
+    document.getElementById("reel-frame").innerHTML = html;
+  }
+  var probe = document.createElement("video");
+  probe.preload = "metadata";
+  probe.onloadedmetadata = function(){
+    showReel('<video controls playsinline preload="metadata" poster="assets/Showreel.jpg" src="' + REEL_FILE + '"></video>');
+  };
+  probe.onerror = function(){
+    if(REEL_ID) showReel('<iframe src="https://www.youtube.com/embed/' + encodeURIComponent(REEL_ID) + '" title="Kim Merer Levi showreel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+  };
+  probe.src = REEL_FILE;
+
+  if(location.protocol.indexOf("http") === 0){
+    fetch("resume.pdf", {method:"HEAD"}).then(function(res){
+      if(res.ok) document.getElementById("resume-btn").hidden = false;
+    }).catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>
