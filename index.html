@@ -46,7 +46,7 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
   /* cursor light: a soft accent-cyan glow plus a dot grid that lights up around the mouse (mouse devices only) */
-  .spot{position:fixed; inset:0; z-index:29; pointer-events:none; mix-blend-mode:screen; opacity:0; transition:opacity .6s ease; --mx:50vw; --my:40vh}
+  .spot{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:0; transition:opacity .6s ease; --mx:50vw; --my:40vh}
   .spot.on{opacity:1}
   .spot::before{content:""; position:absolute; inset:0;
     background:radial-gradient(520px circle at var(--mx) var(--my), rgba(137,207,240,.16), rgba(137,207,240,.055) 40%, transparent 70%)}
@@ -82,7 +82,7 @@
 
   /* hero */
   .hero{position:relative; min-height:100dvh; display:flex; align-items:flex-end; overflow:hidden; isolation:isolate}
-  .hero-media{position:absolute; inset:0; z-index:-2; background:radial-gradient(55% 60% at 78% 62%, rgba(137,207,240,.16), rgba(12,13,15,0) 70%), var(--midnight)}
+  .hero-media{position:absolute; inset:0; z-index:-2; background:radial-gradient(55% 60% at 78% 62%, rgba(137,207,240,.16), rgba(12,13,15,0) 70%), rgba(8,9,10,.55)}
   .hero-inner{padding-top:120px}
   .hero-media video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
   .hero-media video.on{opacity:1}
@@ -242,7 +242,7 @@
   @media(max-width:900px){ .craft{grid-template-columns:1fr; gap:24px} .craft .sticky{position:static} }
   @media(max-width:600px){ .skills{grid-template-columns:1fr} .skill,.skill:nth-child(odd){padding-right:0} }
 
-  footer{position:relative; padding:clamp(80px,12vw,150px) 0 40px; background:var(--midnight); border-top:1px solid var(--line); overflow:hidden}
+  footer{position:relative; padding:clamp(80px,12vw,150px) 0 40px; background:rgba(8,9,10,.55); border-top:1px solid var(--line); overflow:hidden}
   footer::before{content:""; position:absolute; left:50%; top:-40%; width:900px; height:600px; transform:translateX(-50%);
     background:radial-gradient(closest-side, rgba(137,207,240,.12), transparent); pointer-events:none}
   .big{font:800 clamp(40px,7vw,104px)/.98 var(--display); letter-spacing:-.04em; margin:0 0 30px; max-width:13ch}
