@@ -45,6 +45,18 @@
   body::after{content:""; position:fixed; inset:0; z-index:40; pointer-events:none; opacity:.05;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
+  /* cursor light: a soft white glow plus a dot grid that lights up around the mouse (mouse devices only) */
+  .spot{position:fixed; inset:0; z-index:29; pointer-events:none; mix-blend-mode:screen; opacity:0; transition:opacity .6s ease; --mx:50vw; --my:40vh}
+  .spot.on{opacity:1}
+  .spot::before{content:""; position:absolute; inset:0;
+    background:radial-gradient(520px circle at var(--mx) var(--my), rgba(255,255,255,.13), rgba(255,255,255,.045) 40%, transparent 70%)}
+  .spot::after{content:""; position:absolute; inset:0;
+    background-image:radial-gradient(circle, rgba(255,255,255,.55) 1px, transparent 1.6px); background-size:28px 28px;
+    -webkit-mask-image:radial-gradient(260px circle at var(--mx) var(--my), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%);
+            mask-image:radial-gradient(260px circle at var(--mx) var(--my), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%);
+    opacity:.4}
+  @media (hover:none), (pointer:coarse){ .spot{display:none} }
+
   /* buttons are always pills; media and panels are 16px */
   .btn{display:inline-flex; align-items:center; gap:10px; white-space:nowrap; font:500 15px/1 var(--body);
     padding:15px 24px; border-radius:999px; border:1px solid var(--line-2); color:var(--text);
@@ -688,6 +700,25 @@
 
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.getElementById("yr").textContent = new Date().getFullYear();
+
+  // Cursor light: eases toward the mouse; fades out when the mouse leaves the window.
+  (function(){
+    if(!window.matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+    var s = document.createElement("div"); s.className = "spot"; s.setAttribute("aria-hidden","true");
+    document.body.appendChild(s);
+    var tx = innerWidth/2, ty = innerHeight*.4, x = tx, y = ty, raf = 0;
+    function step(){
+      x += (tx-x)*(reduce?1:.14); y += (ty-y)*(reduce?1:.14);
+      s.style.setProperty("--mx", x.toFixed(1)+"px"); s.style.setProperty("--my", y.toFixed(1)+"px");
+      raf = (Math.abs(tx-x)+Math.abs(ty-y) > .3) ? requestAnimationFrame(step) : 0;
+    }
+    addEventListener("pointermove", function(e){
+      if(e.pointerType !== "mouse") return;
+      tx = e.clientX; ty = e.clientY; s.classList.add("on");
+      if(!raf) raf = requestAnimationFrame(step);
+    }, {passive:true});
+    document.documentElement.addEventListener("mouseleave", function(){ s.classList.remove("on"); });
+  })();
 
   var header = document.getElementById("top");
   var hero = document.querySelector(".hero");
