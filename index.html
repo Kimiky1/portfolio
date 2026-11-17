@@ -45,13 +45,13 @@
   body::after{content:""; position:fixed; inset:0; z-index:40; pointer-events:none; opacity:.05;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-  /* cursor light: a soft white glow plus a dot grid that lights up around the mouse (mouse devices only) */
+  /* cursor light: a soft accent-cyan glow plus a dot grid that lights up around the mouse (mouse devices only) */
   .spot{position:fixed; inset:0; z-index:29; pointer-events:none; mix-blend-mode:screen; opacity:0; transition:opacity .6s ease; --mx:50vw; --my:40vh}
   .spot.on{opacity:1}
   .spot::before{content:""; position:absolute; inset:0;
-    background:radial-gradient(520px circle at var(--mx) var(--my), rgba(255,255,255,.13), rgba(255,255,255,.045) 40%, transparent 70%)}
+    background:radial-gradient(520px circle at var(--mx) var(--my), rgba(137,207,240,.16), rgba(137,207,240,.055) 40%, transparent 70%)}
   .spot::after{content:""; position:absolute; inset:0;
-    background-image:radial-gradient(circle, rgba(255,255,255,.55) 1px, transparent 1.6px); background-size:28px 28px;
+    background-image:radial-gradient(circle, rgba(137,207,240,.7) 1px, transparent 1.6px); background-size:28px 28px;
     -webkit-mask-image:radial-gradient(260px circle at var(--mx) var(--my), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%);
             mask-image:radial-gradient(260px circle at var(--mx) var(--my), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%);
     opacity:.4}
