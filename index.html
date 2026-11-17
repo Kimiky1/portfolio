@@ -11,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="assets/Sigil%20hero%20poster.jpg">
 <style>
   /* Palette: Slate Blue & Silver-Gray.
      60% charcoal black, 30% Cool Steel Gray, 10% Ice Blue. Dark theme is locked: game art reads best on dark. */
@@ -71,7 +70,8 @@
 
   /* hero */
   .hero{position:relative; min-height:100dvh; display:flex; align-items:flex-end; overflow:hidden; isolation:isolate}
-  .hero-media{position:absolute; inset:0; z-index:-2; background:var(--midnight) url("assets/Sigil%20hero%20poster.jpg") center/cover}
+  .hero-media{position:absolute; inset:0; z-index:-2; background:radial-gradient(55% 60% at 78% 62%, rgba(137,207,240,.16), rgba(12,13,15,0) 70%), var(--midnight)}
+  .hero-inner{padding-top:120px}
   .hero-media video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
   .hero-media video.on{opacity:1}
   .hero::before{content:""; position:absolute; inset:0; z-index:-1;
@@ -177,19 +177,41 @@
     .stat + .stat{border-top:1px solid var(--line)}
   }
 
-  /* moments grid: wide tiles span two columns, so each row mixes one wide and two square */
-  .moments{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-rows:clamp(200px,24vw,300px); gap:16px; margin-top:44px}
-  .mo{position:relative; margin:0; border-radius:var(--r); overflow:hidden; background:var(--bg-3); border:1px solid var(--line)}
-  .mo.wide{grid-column:span 2}
-  .mo video{width:100%; height:100%; object-fit:cover; transition:transform .8s var(--ease)}
-  .mo:hover video{transform:scale(1.04)}
-  .mo figcaption{position:absolute; left:0; right:0; bottom:0; padding:40px 16px 14px; font-size:13px; color:var(--muted);
-    background:linear-gradient(0deg, rgba(8,9,10,.85), rgba(8,9,10,0))}
+  /* moments by category: every clip keeps its own shape (phone or wide), nothing is cropped */
+  .cat{margin-top:56px}
+  .cat-head{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin:0 0 20px; padding-top:22px; border-top:1px solid var(--line)}
+  .cat-head h3{font:800 clamp(24px,2.4vw,32px)/1.1 var(--display); letter-spacing:-.02em; margin:0}
+  .cat-head p{margin:0; color:var(--faint); font-size:15px}
+  .strip{display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start}
+  .mo{margin:0; flex:none}
+  .mo .frame{border-radius:var(--r); overflow:hidden; background:var(--midnight); border:1px solid var(--line)}
+  .mo.tall .frame{height:clamp(380px,36vw,500px); aspect-ratio:540/1200; border-radius:22px; border:5px solid #1d2126}
+  .mo.wide .frame{height:clamp(220px,22vw,300px); aspect-ratio:16/9}
+  .mo video{width:100%; height:100%; object-fit:contain}
+  .mo figcaption{padding:12px 2px 0; font-size:13px; color:var(--muted); max-width:24ch}
+  .mo.wide figcaption{max-width:40ch}
   .mo figcaption b{display:block; font:700 17px/1.2 var(--display); color:var(--text); margin-bottom:2px}
   @media(max-width:767px){
-    .moments{grid-template-columns:1fr 1fr; grid-auto-rows:180px; gap:10px}
-    .mo.wide{grid-column:span 2}
+    .strip{flex-wrap:nowrap; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -16px; padding:0 16px 8px; gap:14px}
+    .mo{scroll-snap-align:start}
+    .mo.tall .frame{height:420px}
+    .mo.wide .frame{height:auto; width:84vw}
   }
+
+  /* hero phones: mobile footage up front */
+  .hero-phones{display:flex; gap:18px; align-items:flex-end; justify-content:flex-end}
+  .hero-phones .ph{width:clamp(130px,13vw,200px); aspect-ratio:540/1200; border-radius:24px; overflow:hidden; border:5px solid #1d2126; background:var(--midnight); box-shadow:0 40px 80px -30px rgba(0,0,0,.8)}
+  .hero-phones .ph:nth-child(2){transform:translateY(-36px)}
+  .hero-phones video{width:100%; height:100%; object-fit:cover}
+  .hero-grid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:40px; align-items:end}
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-phones{justify-content:flex-start; gap:10px}
+    .hero-phones .ph{width:28vw; border-width:3px; border-radius:16px}
+    .hero-phones .ph:nth-child(2){transform:none}
+  }
+  .gx-media.tall{aspect-ratio:auto; height:min(76vh,680px); background:var(--midnight)}
+  .gx-media.tall video{object-fit:contain}
 
   /* reel */
   .reel{position:relative; aspect-ratio:16/9; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); margin-top:40px; background:var(--midnight)}
@@ -235,21 +257,23 @@
 
 <main>
   <section class="hero" style="padding:0">
-    <div class="hero-media" aria-hidden="true">
-      <video muted playsinline preload="auto" src="assets/Sigil%2001_morvane_dread_nova.mp4"></video>
-      <video muted playsinline preload="metadata" src="assets/Sigil%2002_hekt_arrives.mp4"></video>
-      <video muted playsinline preload="metadata" src="assets/Sigil%2004_brakka_forked_storm.mp4"></video>
-    </div>
-    <div class="wrap hero-inner">
-      <p class="eyebrow rise">Unity Technical Artist</p>
-      <h1 class="rise d1">I make games look expensive and <em>run on anything.</em></h1>
-      <p class="sub rise d2">VFX, shaders, lighting and UI. 23 shipped titles across mobile and Steam, now building a 3D RPG.</p>
-      <div class="cta rise d3">
-        <a class="btn primary" href="#games">See the games <span class="arr">&rarr;</span></a>
-        <a class="btn" href="mailto:kimiky11@gmail.com">Email me</a>
+    <div class="hero-media" aria-hidden="true"></div>
+    <div class="wrap hero-inner hero-grid">
+      <div>
+        <p class="eyebrow rise">Unity Technical Artist</p>
+        <h1 class="rise d1">I make mobile games look expensive and <em>run on anything.</em></h1>
+        <p class="sub rise d2">VFX, shaders, UI and the juice between them, for casual and hybrid casual games. 23 shipped titles on Google Play, the App Store and Steam.</p>
+        <div class="cta rise d3">
+          <a class="btn primary" href="#games">See the games <span class="arr">&rarr;</span></a>
+          <a class="btn" href="#moments">Watch the moments</a>
+        </div>
+      </div>
+      <div class="hero-phones rise d4" aria-hidden="true">
+        <div class="ph"><video muted playsinline loop autoplay preload="auto" poster="assets/moments/super.jpg" src="assets/moments/super.mp4"></video></div>
+        <div class="ph"><video muted playsinline loop autoplay preload="auto" poster="assets/moments/infinite.jpg" src="assets/moments/infinite.mp4"></video></div>
+        <div class="ph"><video muted playsinline loop autoplay preload="auto" poster="assets/moments/void_gear.jpg" src="assets/moments/void_gear.mp4"></video></div>
       </div>
     </div>
-    <p class="hero-credit rise d4"><b>Sigilbound</b>in-game footage</p>
   </section>
 
   <!-- Logos live in assets/logos/. A missing file just hides its image. -->
@@ -268,7 +292,7 @@
   <div class="stats">
     <div class="wrap stats-row">
       <div class="stat reveal"><b data-count="23">23</b><span>shipped titles</span></div>
-      <div class="stat reveal"><b data-count="5">5</b><span>years in production</span></div>
+      <div class="stat reveal"><b data-count="4">4</b><span>years in production</span></div>
       <div class="stat reveal"><b data-count="5">5</b><span>studios and publishers</span></div>
     </div>
   </div>
@@ -281,39 +305,21 @@
 
       <div class="gx reveal">
         <div class="gx-tabs" role="tablist" aria-label="Games">
-          <button class="gx-tab" role="tab" aria-selected="true" aria-controls="p-sigil" id="t-sigil"><img src="assets/Sigilbound%20Logo.png" alt="" style="object-fit:contain; padding:4px"><div><b>Sigilbound</b><span>Steam, coming soon</span></div></button>
-          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-smash" id="t-smash"><img src="assets/Smash%20Hole%20Icon.png" alt=""><div><b>Smash Hole</b><span>WizPlay</span></div></button>
-          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-blast" id="t-blast"><img src="assets/Pinata%20Blast%20Icon.jpg" alt=""><div><b>Pinata Blast</b><span>WizPlay</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="true" aria-controls="p-smash" id="t-smash"><img src="assets/Smash%20Hole%20Icon.png" alt=""><div><b>Smash Hole</b><span>WizPlay, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-blast" id="t-blast"><img src="assets/Pinata%20Blast%20Icon.jpg" alt=""><div><b>Pinata Blast</b><span>WizPlay, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-void" id="t-void"><img src="assets/Voidmancer%20Game%20Icon.png" alt=""><div><b>Voidmancer</b><span>Hoppa Play, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-dsd" id="t-dsd"><img src="assets/clover/draftshowdown.png" alt=""><div><b>DraftShowdown</b><span>Clover Bite, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-cog" id="t-cog"><img src="assets/clover/coffeego.png" alt=""><div><b>Coffee Go</b><span>Clover Bite, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-yat" id="t-yat"><img src="assets/clover/yarntwist.png" alt=""><div><b>Yarn Twist</b><span>Clover Bite, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-bub" id="t-bub"><img src="assets/clover/busbuddies.png" alt=""><div><b>Bus Buddies</b><span>Clover Bite, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-lis" id="t-lis"><img src="assets/clover/liquidslide.png" alt=""><div><b>LiquidSlide</b><span>Clover Bite, mobile</span></div></button>
+          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-sigil" id="t-sigil"><img src="assets/Sigilbound%20Logo.png" alt="" style="object-fit:contain; padding:4px"><div><b>Sigilbound</b><span>Steam, coming soon</span></div></button>
           <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-oh" id="t-oh"><img src="assets/Overlord%27s%20Game%20Icon.png" alt="" style="object-fit:contain; padding:3px"><div><b>Overlords Harvest</b><span>Steam</span></div></button>
-          <button class="gx-tab" role="tab" aria-selected="false" aria-controls="p-void" id="t-void"><img src="assets/Voidmancer%20Game%20Icon.png" alt=""><div><b>Voidmancer</b><span>Google Play</span></div></button>
         </div>
 
         <div>
-          <!-- Sigilbound -->
-          <article class="gx-panel show" role="tabpanel" id="p-sigil" aria-labelledby="t-sigil">
-            <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/Breakdown%20Sigilbound.jpg" src="assets/Breakdown%20Sigilbound.mp4"></video></div>
-            <div class="gx-body">
-              <div>
-                <p class="gx-meta"><em>Coming soon</em> on Steam<br>Co-creator, art and tech-art lead</p>
-                <h3>Sigilbound</h3>
-                <p>A 3D hero-collector RPG built at Broken Adventure. I own how it looks and how it feels to play.</p>
-                <a class="btn primary" href="https://store.steampowered.com/app/5433810/Sigilbound/" target="_blank" rel="noopener">Wishlist on Steam <span class="arr">&nearr;</span></a>
-              </div>
-              <div>
-                <p class="did">What I did</p>
-                <ul class="gx-list">
-                  <li>Art direction and the look of every arena, chapter and dungeon</li>
-                  <li>Skill, boss and status VFX, plus the combat feel pass</li>
-                  <li>Lighting and post-processing across every scene</li>
-                  <li>Hub, battle HUD, recruit board and menus in uGUI</li>
-                  <li>Trailers, shorts and the Steam store page</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-
           <!-- Smash Hole -->
-          <article class="gx-panel" role="tabpanel" id="p-smash" aria-labelledby="t-smash" hidden>
+          <article class="gx-panel show" role="tabpanel" id="p-smash" aria-labelledby="t-smash">
             <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/Breakdown%20Smash%20Hole.jpg" src="assets/Breakdown%20Smash%20Hole.mp4"></video></div>
             <div class="gx-body">
               <div>
@@ -328,7 +334,7 @@
                   <li>Voxel destruction with no physics: chunks and particle debris that stay cheap on phones</li>
                   <li>Voxel types and materials, including glass shatter, TNT chains and iron</li>
                   <li>Booster buttons, counts and the timer meter in the HUD</li>
-                  <li>End-level payout: leftover balls turn into coins that fly to your balance</li>
+                  <li>End of level payout: leftover balls turn into coins that fly to your balance</li>
                 </ul>
               </div>
             </div>
@@ -362,7 +368,7 @@
                 <p class="did">What I did</p>
                 <ul class="gx-list">
                   <li>Crack stages for large cubes and ice cubes</li>
-                  <li>Environment lighting and per-level colour palettes</li>
+                  <li>Environment lighting and a colour palette for every level</li>
                   <li>Animation and FX for every booster, from button tap to the last debris</li>
                   <li>Gift opening at level end, with three looks and three candy bursts</li>
                 </ul>
@@ -376,7 +382,7 @@
               </div>
               <div class="bst">
                 <h4>Pinata Bat</h4>
-                <p>The bat flies in from the camera, winds up and swings right-handed into the pinata. A lattice stretches it with swing speed and whips it on impact, and the hit-stop, shake and screen punch land after the freeze.</p>
+                <p>The bat flies in from the camera, winds up and swings into the pinata with the right hand. A lattice stretches it with swing speed and whips it on impact, and the hit stop, shake and screen punch land after the freeze.</p>
               </div>
               <div class="bst">
                 <h4>UFO</h4>
@@ -385,6 +391,153 @@
               <div class="bst">
                 <h4>Unlock reveal</h4>
                 <p>Shared by all three. The tile pops in over turning rays, flies a sparkle arc to its button, and lands with a punch, an edge flash, a ring and a burst.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Voidmancer -->
+          <article class="gx-panel" role="tabpanel" id="p-void" aria-labelledby="t-void" hidden>
+            <div class="gx-media tall"><video controls muted playsinline loop preload="none" poster="assets/Voidmancer%20Ad.jpg" src="assets/Voidmancer%20Ad.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Hoppa Play</em> on Google Play<br>Technical artist</p>
+                <h3>Voidmancer</h3>
+                <p>The game that started the Hoppa Play label, made with my longtime partner. The video is one of our ads.</p>
+                <a class="btn" href="https://play.google.com/store/apps/details?id=com.ek.mgq&amp;hl=en" target="_blank" rel="noopener">View on Google Play <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>All VFX and shaders</li>
+                  <li>UI tech and screen flow</li>
+                  <li>Mobile optimization: smaller builds and lower texture memory</li>
+                  <li>Juice and polish on every core interaction</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Clover Bite: DraftShowdown -->
+          <article class="gx-panel" role="tabpanel" id="p-dsd" aria-labelledby="t-dsd" hidden>
+            <div class="gx-media tall"><video controls muted playsinline loop preload="none" poster="assets/clover/draftshowdown.jpg" src="assets/clover/draftshowdown.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Clover Bite</em><br>Lead technical artist</p>
+                <h3>DraftShowdown</h3>
+                <p>A card battler: draft a card each round, then watch the two armies clash.</p>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Battle VFX, including the lightning storm skill</li>
+                  <li>Cloud wipe transitions and the matchmaking screen</li>
+                  <li>Card pick and lobby UI animation</li>
+                  <li>Led the tech art side of a 9 person team, managing two artists</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Clover Bite: Coffee Go -->
+          <article class="gx-panel" role="tabpanel" id="p-cog" aria-labelledby="t-cog" hidden>
+            <div class="gx-media tall"><video controls muted playsinline loop preload="none" poster="assets/clover/coffeego.jpg" src="assets/clover/coffeego.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Clover Bite</em><br>Lead technical artist</p>
+                <h3>Coffee Go</h3>
+                <p>Send coffee cups around a conveyor and pack them into matching trays.</p>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Power up FX: the extra conveyor and the Complete Box pick</li>
+                  <li>Win celebration and reward screens</li>
+                  <li>The Coffee Rush event intro</li>
+                  <li>Cup, tray and conveyor juice</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Clover Bite: Yarn Twist -->
+          <article class="gx-panel" role="tabpanel" id="p-yat" aria-labelledby="t-yat" hidden>
+            <div class="gx-media tall"><video controls muted playsinline loop preload="none" poster="assets/clover/yarntwist.jpg" src="assets/clover/yarntwist.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Clover Bite</em><br>Lead technical artist</p>
+                <h3>Yarn Twist</h3>
+                <p>Tap boxes of yarn balls and wind them onto matching spools. Normal, hard and super hard levels in the clip.</p>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Yarn ball flow along the belt and the spool winding feel</li>
+                  <li>Hard and super hard level themes</li>
+                  <li>Tutorial and level UI</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Clover Bite: Bus Buddies -->
+          <article class="gx-panel" role="tabpanel" id="p-bub" aria-labelledby="t-bub" hidden>
+            <div class="gx-media tall"><video controls muted playsinline loop preload="none" poster="assets/clover/busbuddies.jpg" src="assets/clover/busbuddies.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Clover Bite</em><br>Lead technical artist</p>
+                <h3>Bus Buddies</h3>
+                <p>Send buses to the parking row and their passengers walk up to build a pixel picture. Normal, hard and super hard levels in the clip.</p>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Bus drive and parking juice</li>
+                  <li>Passengers filling the pixel picture</li>
+                  <li>Hard and super hard level looks</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Clover Bite: LiquidSlide -->
+          <article class="gx-panel" role="tabpanel" id="p-lis" aria-labelledby="t-lis" hidden>
+            <div class="gx-media tall"><video controls muted playsinline loop preload="none" poster="assets/clover/liquidslide.jpg" src="assets/clover/liquidslide.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Clover Bite</em><br>Lead technical artist</p>
+                <h3>LiquidSlide</h3>
+                <p>Pour soda cans into a looping pipe and fill the matching cups before the pipe overflows.</p>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Liquid flowing through the pipe</li>
+                  <li>Pour and fill FX</li>
+                  <li>Fail and retry UI</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Sigilbound -->
+          <article class="gx-panel" role="tabpanel" id="p-sigil" aria-labelledby="t-sigil" hidden>
+            <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/Breakdown%20Sigilbound.jpg" src="assets/Breakdown%20Sigilbound.mp4"></video></div>
+            <div class="gx-body">
+              <div>
+                <p class="gx-meta"><em>Coming soon</em> on Steam<br>Art director and technical artist</p>
+                <h3>Sigilbound</h3>
+                <p>A 3D hero collector RPG built at Broken Adventure. I own how it looks and how it feels to play.</p>
+                <a class="btn primary" href="https://store.steampowered.com/app/5433810/Sigilbound/" target="_blank" rel="noopener">Wishlist on Steam <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>Art direction and the look of every arena, chapter and dungeon</li>
+                  <li>Skill, boss and status VFX, plus the combat feel pass</li>
+                  <li>Lighting and post processing across every scene</li>
+                  <li>Hub, battle HUD, recruit board and menus in uGUI</li>
+                  <li>Trailers, shorts and the Steam store page</li>
+                </ul>
               </div>
             </div>
           </article>
@@ -403,7 +556,7 @@
                 <p class="did">What I did</p>
                 <ul class="gx-list">
                   <li>Designed and built the whole game in Unity</li>
-                  <li>Big hordes on screen with the spell and summoning-circle VFX</li>
+                  <li>Big hordes on screen with the spell and summoning circle VFX</li>
                   <li>Talent tree, Hellforge and relic screens</li>
                   <li>The full Steam release: store page, builds and launch</li>
                 </ul>
@@ -411,50 +564,72 @@
             </div>
           </article>
 
-          <!-- Voidmancer -->
-          <article class="gx-panel" role="tabpanel" id="p-void" aria-labelledby="t-void" hidden>
-            <div class="gx-media" data-slides>
-              <div class="slides">
-                <img src="assets/Void%20Image1.jpg" alt="Voidmancer gameplay" loading="lazy">
-                <img src="assets/Void%20Image2.jpg" alt="Voidmancer gameplay" loading="lazy">
-                <img src="assets/Void%20Image3.png" alt="Voidmancer gameplay" loading="lazy">
-              </div>
-            </div>
-            <div class="gx-body">
-              <div>
-                <p class="gx-meta"><em>Google Play</em><br>Co-creator, technical artist</p>
-                <h3>Voidmancer</h3>
-                <p>The breakout mobile title that launched the Hoppa Play label, made with my long-time development partner.</p>
-                <a class="btn" href="https://play.google.com/store/apps/details?id=com.ek.mgq&amp;hl=en" target="_blank" rel="noopener">View on Google Play <span class="arr">&nearr;</span></a>
-              </div>
-              <div>
-                <p class="did">What I did</p>
-                <ul class="gx-list">
-                  <li>All VFX and shaders</li>
-                  <li>UI tech and screen flow</li>
-                  <li>Mobile optimization: smaller builds and lower texture memory</li>
-                  <li>Juice and polish on every core interaction</li>
-                </ul>
-              </div>
-            </div>
-          </article>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MOMENTS: short silent loops that play while on screen -->
+  <!-- MOMENTS by category. To add a clip: drop it in assets/moments and add a figure (class "tall" for phone, "wide" for 16:9).
+       Empty categories are left out. Planned after today's recordings: Wins and level end, Tournaments and leaderboards. -->
   <section id="moments" style="padding-top:0">
     <div class="wrap">
       <h2 class="h2 reveal">Moments I built</h2>
-      <p class="lede reveal">The few seconds a player remembers. Each one is my animation, FX and timing.</p>
-      <div class="moments">
-        <figure class="mo wide reveal"><video muted playsinline loop preload="none" poster="assets/moments/sigil.jpg" src="assets/moments/sigil.mp4"></video><figcaption><b>Dread Nova</b>Sigilbound skill VFX</figcaption></figure>
-        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/super.jpg" src="assets/moments/super.mp4"></video><figcaption><b>Super Shooter</b>Pinata Blast hero sequence</figcaption></figure>
-        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/bat.jpg" src="assets/moments/bat.mp4"></video><figcaption><b>Pinata Bat</b>Swing, stretch and hit-stop</figcaption></figure>
-        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/ufo.jpg" src="assets/moments/ufo.mp4"></video><figcaption><b>UFO</b>Pick mode and carry</figcaption></figure>
-        <figure class="mo reveal"><video muted playsinline loop preload="none" poster="assets/moments/infinite.jpg" src="assets/moments/infinite.mp4"></video><figcaption><b>Infinite Balls</b>Smash Hole booster</figcaption></figure>
-        <figure class="mo wide reveal"><video muted playsinline loop preload="none" poster="assets/moments/horde.jpg" src="assets/moments/horde.mp4"></video><figcaption><b>The horde</b>Overlords Harvest spells</figcaption></figure>
+      <p class="lede reveal">The few seconds a player remembers, sorted by the kind of work. Each one is my animation, FX and timing, shown whole.</p>
+
+      <div class="cat reveal">
+        <div class="cat-head"><h3>Boosters and power ups</h3><p>From the button tap to the last piece of debris</p></div>
+        <div class="strip">
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/super.jpg" src="assets/moments/super.mp4"></video></div><figcaption><b>Super Shooter</b>Pinata Blast hero sequence</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/bat.jpg" src="assets/moments/bat.mp4"></video></div><figcaption><b>Pinata Bat</b>Swing, stretch and hit stop</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/ufo.jpg" src="assets/moments/ufo.mp4"></video></div><figcaption><b>UFO</b>Pick mode and carry</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/infinite.jpg" src="assets/moments/infinite.mp4"></video></div><figcaption><b>Infinite Balls</b>Smash Hole, banner, gold cannon and timer</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/wider.jpg" src="assets/moments/wider.mp4"></video></div><figcaption><b>Wider Hole</b>Smash Hole, the hole grows with a golden rim</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/cog_conveyor.jpg" src="assets/moments/cog_conveyor.mp4"></video></div><figcaption><b>Extra conveyor</b>Coffee Go, cups rush onto the longer belt</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/cog_box.jpg" src="assets/moments/cog_box.mp4"></video></div><figcaption><b>Complete Box</b>Coffee Go, pick a box to finish</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="cat reveal">
+        <div class="cat-head"><h3>Meta features and UI</h3><p>Upgrades, gear and rewards that keep players coming back</p></div>
+        <div class="strip">
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/void_gear.jpg" src="assets/moments/void_gear.mp4"></video></div><figcaption><b>Gear and upgrades</b>Voidmancer</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/void_loot.jpg" src="assets/moments/void_loot.mp4"></video></div><figcaption><b>Loot and crafting</b>Voidmancer</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/cog_rush.jpg" src="assets/moments/cog_rush.mp4"></video></div><figcaption><b>Coffee Rush event</b>Coffee Go, the event intro with its coin rain</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="cat reveal">
+        <div class="cat-head"><h3>Matchmaking and battles</h3><p>Finding an opponent, picking cards, and the fight</p></div>
+        <div class="strip">
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/dsd_matchmaking.jpg" src="assets/moments/dsd_matchmaking.mp4"></video></div><figcaption><b>Matchmaking</b>DraftShowdown, searching for an opponent</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/dsd_cards.jpg" src="assets/moments/dsd_cards.mp4"></video></div><figcaption><b>Card pick</b>DraftShowdown, a card each round</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/dsd_lightning.jpg" src="assets/moments/dsd_lightning.mp4"></video></div><figcaption><b>Lightning storm</b>DraftShowdown battle VFX</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="cat reveal">
+        <div class="cat-head"><h3>Wins and level end</h3><p>The payoff screens, good and bad</p></div>
+        <div class="strip">
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/cog_win.jpg" src="assets/moments/cog_win.mp4"></video></div><figcaption><b>Level complete</b>Coffee Go, confetti splash and rewards</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/lis_fail.jpg" src="assets/moments/lis_fail.mp4"></video></div><figcaption><b>Level failed</b>LiquidSlide, retry and the next level</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="cat reveal">
+        <div class="cat-head"><h3>Core gameplay</h3><p>The loop players repeat thousands of times, so it has to feel good</p></div>
+        <div class="strip">
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/yat_spools.jpg" src="assets/moments/yat_spools.mp4"></video></div><figcaption><b>Yarn to spools</b>Yarn Twist, hard level</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/bub_parking.jpg" src="assets/moments/bub_parking.mp4"></video></div><figcaption><b>Park and build</b>Bus Buddies, super hard level</figcaption></figure>
+          <figure class="mo tall"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/lis_pour.jpg" src="assets/moments/lis_pour.mp4"></video></div><figcaption><b>Pour and fill</b>LiquidSlide</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="cat reveal">
+        <div class="cat-head"><h3>PC and 3D</h3><p>Skill VFX and big battles</p></div>
+        <div class="strip">
+          <figure class="mo wide"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/sigil.jpg" src="assets/moments/sigil.mp4"></video></div><figcaption><b>Dread Nova</b>Sigilbound skill VFX</figcaption></figure>
+          <figure class="mo wide"><div class="frame"><video muted playsinline loop preload="none" poster="assets/moments/horde.jpg" src="assets/moments/horde.mp4"></video></div><figcaption><b>The horde</b>Overlords Harvest spells</figcaption></figure>
+        </div>
       </div>
     </div>
   </section>
@@ -471,17 +646,19 @@
     <div class="wrap craft">
       <div class="sticky reveal">
         <h2 class="h2">The art, and the frame rate.</h2>
-        <p class="lede">Five years between artists and programmers. I make the effect, then make it cheap enough to ship.</p>
+        <p class="lede">Four years between artists and programmers. I make the effect, then make it cheap enough to ship.</p>
       </div>
       <div>
         <div class="skills">
-          <div class="skill reveal"><h3>Real-time VFX</h3><p>Hits, spells, pickups and the juice between them, with Shuriken and VFX Graph.</p></div>
+          <div class="skill reveal"><h3>Real time VFX</h3><p>Hits, spells, pickups and the juice between them, with Shuriken and VFX Graph.</p></div>
           <div class="skill reveal"><h3>Shaders and UI</h3><p>Shader Graph and HLSL for stylized surfaces, 2D and UI. Menus that move like the game does.</p></div>
           <div class="skill reveal"><h3>Lighting and look</h3><p>Lighting, post and colour that hold one mood across a whole game.</p></div>
-          <div class="skill reveal"><h3>Performance</h3><p>Smaller builds, fewer draw calls and a steady frame rate on low-end phones.</p></div>
+          <div class="skill reveal"><h3>Performance</h3><p>Smaller builds, fewer draw calls and a steady frame rate on cheap phones.</p></div>
+          <div class="skill reveal"><h3>Meta and UI flow</h3><p>Upgrade screens, rewards, boosters and level end celebrations where everything pops and lands.</p></div>
+          <div class="skill reveal"><h3>3D and AI workflows</h3><p>Blender, Tripo 3D and Claude, from concept to game ready models, effects and features, inside the frame budget.</p></div>
         </div>
         <div class="tools reveal">
-          <span>Unity URP</span><span>C#</span><span>Shader Graph</span><span>VFX Graph</span><span>Blender</span><span>Photoshop</span><span>Profiler</span><span>Git</span>
+          <span>Unity URP</span><span>C#</span><span>Shader Graph</span><span>VFX Graph</span><span>Blender</span><span>Photoshop</span><span>Profiler</span><span>Git</span><span>Claude</span><span>Tripo 3D</span>
         </div>
       </div>
     </div>
@@ -526,7 +703,8 @@
 
   // hero: chain the clips
   var heroVids = Array.prototype.slice.call(document.querySelectorAll(".hero-media video"));
-  if(!reduce){
+  if(reduce){ document.querySelectorAll(".hero-phones video").forEach(function(v){ v.removeAttribute("autoplay"); try{ v.pause(); }catch(e){} }); }
+  if(!reduce && heroVids.length){
     var hi = -1, live = false, ht = null;
     function heroShow(n){
       hi = n; clearTimeout(ht);
