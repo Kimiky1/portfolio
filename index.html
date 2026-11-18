@@ -109,11 +109,65 @@
     .reveal.in{opacity:1; transform:none}
   }
 
-  /* clients: logo + name */
-  .clients{padding:40px 0; border-bottom:1px solid var(--line)}
-  .clients .row{display:flex; flex-wrap:wrap; align-items:center; gap:18px 40px}
-  .clients .lbl{font-size:14px; color:var(--faint); margin-right:4px}
-  .co{display:inline-flex; align-items:center; gap:12px; font:700 clamp(19px,2vw,25px)/1 var(--display); letter-spacing:-.02em; color:#dbe5ee}
+  /* ---------- intro: black stage, floating tiles; scroll gathers them and opens the reel ---------- */
+  .intro{position:relative; height:320vh; background:#050506}
+  .intro .stage{position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; perspective:1200px}
+  .intro .tiles{position:absolute; inset:0}
+  .tile{position:absolute; will-change:transform, opacity}
+  .tile .float{animation:bob var(--d,7s) ease-in-out var(--dl,0s) infinite alternate}
+  .tile .card{border-radius:18px; overflow:hidden; background:#111316; border:1px solid rgba(255,255,255,.08); box-shadow:0 30px 60px -20px rgba(0,0,0,.9)}
+  .tile.tall .card{aspect-ratio:540/1200} .tile.wide .card{aspect-ratio:16/9}
+  .tile img, .tile video{display:block; width:100%; height:100%; object-fit:cover}
+  @keyframes bob{from{transform:translate3d(0,-9px,0) rotate(-1.2deg)} to{transform:translate3d(0,9px,0) rotate(1.2deg)}}
+  /* desktop spots, kept clear of the title column */
+  .t1{left:4%;   top:15%; width:clamp(110px,10.5vw,170px); --d:7.2s}
+  .t2{left:1.5%; top:57%; width:clamp(190px,18vw,290px); --d:8.4s; --dl:-2s}
+  .t3{left:18%;  top:69%; width:clamp(90px,8.5vw,138px); --d:6.6s; --dl:-4s}
+  .t4{left:19%;  top:9%;  width:clamp(70px,6.5vw,104px); --d:7.8s; --dl:-1s}
+  .t5{right:5%;  top:13%; width:clamp(190px,18vw,290px); --d:8.8s; --dl:-3s}
+  .t6{right:2.5%; top:44%; width:clamp(110px,11vw,176px); --d:7s; --dl:-5s}
+  .t7{right:19%; top:70%; width:clamp(90px,8.5vw,138px); --d:6.8s; --dl:-2.5s}
+  .t8{right:30%; top:3%;  width:clamp(56px,5vw,84px); --d:8s; --dl:-6s}
+  .t9{left:33%;  top:85%; width:clamp(64px,6vw,96px); --d:7.4s; --dl:-3.5s}
+  .intro-copy{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:96px 16px 64px; pointer-events:none; will-change:transform, opacity}
+  .intro-copy > *{pointer-events:auto}
+  .intro h1{font:800 clamp(32px,5.4vw,88px)/1 "Unbounded",var(--display); letter-spacing:-.035em; text-transform:uppercase; margin:0; max-width:15ch; text-wrap:balance}
+  .intro h1 em{font-style:normal; color:var(--accent)}
+  .intro .sub{font-size:clamp(15px,1.4vw,18px); color:#b9c6d2; max-width:44ch; margin:24px auto 30px}
+  .intro .cta{display:flex; flex-wrap:wrap; gap:12px; justify-content:center}
+  .intro-reel{position:absolute; left:50%; top:50%; width:min(92vw, calc(84vh * 16 / 9)); aspect-ratio:16/9; border-radius:22px; overflow:hidden;
+    background:#000; transform:translate(-50%,-50%) scale(.16); opacity:0; visibility:hidden; will-change:transform, opacity; box-shadow:0 60px 120px -40px rgba(0,0,0,.9)}
+  .intro-reel video{width:100%; height:100%; object-fit:cover; display:block}
+  .intro-reel::after{content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(5,5,6,.8) 0%, rgba(5,5,6,0) 46%); pointer-events:none}
+  .intro-reel-text{position:absolute; left:0; right:0; bottom:0; z-index:1; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; padding:clamp(18px,3vw,40px); opacity:0; transform:translateY(24px)}
+  .intro-reel-text b{font:800 clamp(28px,6vw,100px)/.9 "Unbounded",var(--display); letter-spacing:-.04em; text-transform:uppercase; color:#eef3f7; text-align:left}
+  .scroll-hint{position:absolute; left:50%; bottom:22px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; font:500 11px/1 var(--mono); letter-spacing:.2em; text-transform:uppercase; color:var(--faint)}
+  .scroll-hint i{width:1px; height:34px; background:linear-gradient(var(--accent),transparent); transform-origin:top; animation:hint 1.8s ease-in-out infinite}
+  @keyframes hint{0%{transform:scaleY(0)} 50%{transform:scaleY(1)} 100%{transform:scaleY(1); opacity:0}}
+  @media(max-width:767px){
+    .t3,.t4,.t6,.t7,.t9{display:none}
+    .t1{left:4%; top:11%; width:20vw} .t8{right:5%; top:10%; width:17vw}
+    .t2{left:-8%; top:78%; width:46vw} .t5{right:-10%; top:82%; width:48vw}
+    .intro .stage{perspective:800px}
+    .intro-reel-text{flex-direction:column; align-items:flex-start}
+    .intro-reel-text .btn{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .intro{height:auto} .intro .stage{position:relative; height:100vh}
+    .tile .float, .scroll-hint i{animation:none}
+    .intro-reel{display:none}
+  }
+
+  /* clients: one slow marquee of studio logos */
+  .clients{padding:56px 0 48px; border-bottom:1px solid var(--line); text-align:center}
+  .clients .lbl{font:500 13px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin:0 0 26px}
+  .marquee{overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent); mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+  .marquee .track{display:flex; align-items:center; width:max-content; animation:marq 34s linear infinite}
+  .marquee .co{margin-right:clamp(40px,5vw,76px)}
+  .marquee:hover .track{animation-play-state:paused}
+  @keyframes marq{to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){ .marquee .track{animation:none; flex-wrap:wrap; justify-content:center; width:auto; row-gap:18px} .marquee .track > [aria-hidden]{display:none} }
+  .co{display:inline-flex; align-items:center; gap:12px; font:700 clamp(19px,2vw,25px)/1 var(--display); letter-spacing:-.02em; color:#dbe5ee; white-space:nowrap}
   .co img{width:36px; height:36px; border-radius:9px; object-fit:contain; background:var(--white); padding:3px}
   .co img.full{padding:0; object-fit:cover; background:var(--bg-3)}
 
@@ -268,10 +322,21 @@
 </header>
 
 <main>
-  <section class="hero" style="padding:0">
-    <div class="hero-media" aria-hidden="true"></div>
-    <div class="wrap hero-inner hero-grid">
-      <div>
+  <!-- INTRO: black stage, floating game tiles; on scroll they gather into the title and the showreel opens up -->
+  <section class="intro" aria-label="Intro" style="padding:0">
+    <div class="stage">
+      <div class="tiles" aria-hidden="true">
+        <div class="tile t1 tall"><div class="float"><div class="card"><video muted playsinline loop autoplay preload="metadata" poster="assets/moments/super.jpg" src="assets/moments/super.mp4"></video></div></div></div>
+        <div class="tile t2 wide"><div class="float"><div class="card"><img src="assets/Sigil%20hero%20poster.jpg" alt=""></div></div></div>
+        <div class="tile t3 tall"><div class="float"><div class="card"><img src="assets/moments/cog_win.jpg" alt=""></div></div></div>
+        <div class="tile t4 tall sm"><div class="float"><div class="card"><img src="assets/moments/yam_cut.jpg" alt=""></div></div></div>
+        <div class="tile t5 wide"><div class="float"><div class="card"><video muted playsinline loop autoplay preload="metadata" poster="assets/moments/horde.jpg" src="assets/moments/horde.mp4"></video></div></div></div>
+        <div class="tile t6 tall"><div class="float"><div class="card"><video muted playsinline loop autoplay preload="metadata" poster="assets/moments/dsd_lightning.jpg" src="assets/moments/dsd_lightning.mp4"></video></div></div></div>
+        <div class="tile t7 tall"><div class="float"><div class="card"><img src="assets/moments/bub_parking.jpg" alt=""></div></div></div>
+        <div class="tile t8 tall sm"><div class="float"><div class="card"><img src="assets/moments/void_gear.jpg" alt=""></div></div></div>
+        <div class="tile t9 tall sm"><div class="float"><div class="card"><img src="assets/moments/lis_pour.jpg" alt=""></div></div></div>
+      </div>
+      <div class="intro-copy">
         <p class="eyebrow rise">Unity Technical Artist</p>
         <h1 class="rise d1">I make mobile games look expensive and <em>run on anything.</em></h1>
         <p class="sub rise d2">VFX, shaders, UI and the juice between them, for casual and hybrid casual games. 23 shipped titles on Google Play, the App Store and Steam.</p>
@@ -280,24 +345,18 @@
           <a class="btn" href="#moments">Watch the moments</a>
         </div>
       </div>
-      <div class="hero-phones rise d4" aria-hidden="true">
-        <div class="ph"><video muted playsinline loop autoplay preload="auto" poster="assets/moments/super.jpg" src="assets/moments/super.mp4"></video></div>
-        <div class="ph"><video muted playsinline loop autoplay preload="auto" poster="assets/moments/infinite.jpg" src="assets/moments/infinite.mp4"></video></div>
-        <div class="ph"><video muted playsinline loop autoplay preload="auto" poster="assets/moments/void_gear.jpg" src="assets/moments/void_gear.mp4"></video></div>
+      <div class="intro-reel">
+        <video muted playsinline loop preload="metadata" poster="assets/intro_reel.jpg" src="assets/intro_reel.mp4" aria-hidden="true"></video>
+        <div class="intro-reel-text"><b>23 shipped titles</b><a class="btn" href="#reel">Watch the full reel <span class="arr">&rarr;</span></a></div>
       </div>
+      <div class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>
     </div>
   </section>
 
   <!-- Logos live in assets/logos/. A missing file just hides its image. -->
   <div class="clients">
-    <div class="wrap row reveal">
-      <span class="lbl">Shipped with</span>
-      <span class="co"><img src="assets/logos/crazylabs.png" alt="" onerror="this.remove()">Crazy Labs</span>
-      <span class="co"><img class="full" src="assets/logos/voodoo.png" alt="" onerror="this.remove()">Voodoo</span>
-      <span class="co"><img class="full" src="assets/logos/wizplay.png" alt="" onerror="this.remove()">WizPlay</span>
-      <span class="co"><img class="full" src="assets/Hoppa_Play%20Icon.png" alt="" onerror="this.remove()">Hoppa Play</span>
-      <span class="co"><img src="assets/logos/cloverbite.png" alt="" onerror="this.remove()">Clover Bite</span>
-    </div>
+    <p class="lbl reveal">Shipped with five studios and publishers</p>
+    <div class="marquee reveal"><div class="track"><span class="co"><img src="assets/logos/crazylabs.png" alt="" onerror="this.remove()">Crazy Labs</span><span class="co"><img class="full" src="assets/logos/voodoo.png" alt="" onerror="this.remove()">Voodoo</span><span class="co"><img class="full" src="assets/logos/wizplay.png" alt="" onerror="this.remove()">WizPlay</span><span class="co"><img class="full" src="assets/Hoppa_Play%20Icon.png" alt="" onerror="this.remove()">Hoppa Play</span><span class="co"><img src="assets/logos/cloverbite.png" alt="" onerror="this.remove()">Clover Bite</span><span class="co" aria-hidden="true"><img src="assets/logos/crazylabs.png" alt="" onerror="this.remove()">Crazy Labs</span><span class="co" aria-hidden="true"><img class="full" src="assets/logos/voodoo.png" alt="" onerror="this.remove()">Voodoo</span><span class="co" aria-hidden="true"><img class="full" src="assets/logos/wizplay.png" alt="" onerror="this.remove()">WizPlay</span><span class="co" aria-hidden="true"><img class="full" src="assets/Hoppa_Play%20Icon.png" alt="" onerror="this.remove()">Hoppa Play</span><span class="co" aria-hidden="true"><img src="assets/logos/cloverbite.png" alt="" onerror="this.remove()">Clover Bite</span></div></div>
   </div>
 
   <!-- Numbers -->
@@ -745,7 +804,7 @@
   })();
 
   var header = document.getElementById("top");
-  var hero = document.querySelector(".hero");
+  var hero = document.querySelector(".intro");
   new IntersectionObserver(function(e){ header.classList.toggle("solid", !e[0].isIntersecting); },
     {rootMargin:"-68px 0px 0px 0px"}).observe(hero);
 
@@ -755,6 +814,69 @@
   document.querySelectorAll(".reveal").forEach(function(el){ rev.observe(el); });
 
   function playSafe(v){ try{ v.currentTime = 0; var p = v.play(); if(p && p.catch) p.catch(function(){}); }catch(e){} }
+
+  // Intro: tiles bob (CSS) and lean away from the mouse; on scroll they fly into the title, then the reel opens up.
+  (function(){
+    var intro = document.querySelector(".intro"); if(!intro) return;
+    var stage = intro.querySelector(".stage"), copy = intro.querySelector(".intro-copy");
+    var reel = intro.querySelector(".intro-reel"), reelVid = reel.querySelector("video"), reelText = reel.querySelector(".intro-reel-text");
+    var hint = intro.querySelector(".scroll-hint");
+    var tiles = Array.prototype.slice.call(intro.querySelectorAll(".tile"));
+    var tileVids = Array.prototype.slice.call(intro.querySelectorAll(".tile video"));
+    if(reduce){ tileVids.forEach(function(v){ v.removeAttribute("autoplay"); try{ v.pause(); }catch(e){} }); return; }
+    var depth = [0.9, 0.6, 1.2, 1.5, 0.7, 1.0, 1.3, 1.6, 1.4];
+    var home = [];
+    function measure(){
+      var sr = stage.getBoundingClientRect();
+      home = tiles.map(function(t){ var r = t.getBoundingClientRect(); return {x: r.left - sr.left + r.width/2 - sr.width/2, y: r.top - sr.top + r.height/2 - sr.height/2}; });
+    }
+    var mx = 0, my = 0, tx = 0, ty = 0;
+    if(window.matchMedia("(hover:hover) and (pointer:fine)").matches)
+      addEventListener("pointermove", function(e){ tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; }, {passive:true});
+    function clamp(v){ return v < 0 ? 0 : v > 1 ? 1 : v; }
+    function ease(t){ return t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+    function setVids(list, on){ list.forEach(function(v){ if(on){ var p = v.play(); if(p && p.catch) p.catch(function(){}); } else { try{ v.pause(); }catch(e){} } }); }
+    var reelOn = false, tilesOn = true, active = true, raf = 0;
+    function frame(){
+      raf = 0;
+      if(!active){ setVids(tileVids, false); setVids([reelVid], false); tilesOn = reelOn = false; return; }
+      mx += (tx - mx) * .08; my += (ty - my) * .08;
+      var r = intro.getBoundingClientRect(), span = r.height - innerHeight;
+      var p = clamp(-r.top / (span || 1));
+      var g = ease(clamp(p / .42));                        // tiles gather
+      var fade = 1 - clamp((p - .3) / .14);                // and vanish into the title
+      tiles.forEach(function(t, i){
+        var h = home[i] || {x:0, y:0}, d = depth[i] || 1;
+        var x = -h.x * g * .92 + mx * -38 * d * (1 - g);
+        var y = -h.y * g * .92 + my * -28 * d * (1 - g);
+        var ry = (h.x > 0 ? -1 : 1) * 28 * g, rx = (h.y > 0 ? 1 : -1) * 14 * g;
+        t.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0) rotateY(" + ry.toFixed(1) + "deg) rotateX(" + rx.toFixed(1) + "deg) scale(" + (1 - .45 * g).toFixed(3) + ")";
+        t.style.opacity = fade.toFixed(3);
+      });
+      var c = clamp((p - .1) / .3);                         // title steps back
+      copy.style.opacity = (1 - c).toFixed(3);
+      copy.style.transform = "translateY(" + (-50 * c).toFixed(1) + "px) scale(" + (1 - .08 * c).toFixed(3) + ")";
+      copy.style.visibility = c >= 1 ? "hidden" : "";
+      hint.style.opacity = (1 - clamp(p / .06)).toFixed(3);
+      var s = ease(clamp((p - .28) / .42));                 // reel opens
+      var o = clamp((p - .26) / .08);
+      reel.style.opacity = o.toFixed(3);
+      reel.style.visibility = o > 0 ? "visible" : "hidden";
+      reel.style.transform = "translate(-50%,-50%) scale(" + (.16 + .84 * s).toFixed(4) + ")";
+      reel.style.borderRadius = (40 - 24 * s).toFixed(1) + "px";
+      var tt = clamp((p - .72) / .14);
+      reelText.style.opacity = tt.toFixed(3); reelText.style.transform = "translateY(" + (24 * (1 - tt)).toFixed(1) + "px)";
+      var wantReel = p > .24, wantTiles = p < .42;
+      if(wantReel !== reelOn){ reelOn = wantReel; setVids([reelVid], reelOn); }
+      if(wantTiles !== tilesOn){ tilesOn = wantTiles; setVids(tileVids, tilesOn); }
+      raf = requestAnimationFrame(frame);
+    }
+    new IntersectionObserver(function(e){ active = e[0].isIntersecting; if(active && !raf) raf = requestAnimationFrame(frame); }, {threshold:0}).observe(intro);
+    function remeasure(){ tiles.forEach(function(t){ t.style.transform = "none"; }); measure(); }
+    addEventListener("resize", remeasure);
+    addEventListener("load", remeasure);
+    remeasure(); raf = requestAnimationFrame(frame);
+  })();
 
   // hero: chain the clips
   var heroVids = Array.prototype.slice.call(document.querySelectorAll(".hero-media video"));
