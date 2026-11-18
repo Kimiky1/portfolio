@@ -7,7 +7,21 @@
 <meta name="description" content="Kim Merer Levi, Unity Technical Artist. Real-time VFX, shaders, lighting, UI and performance for mobile and PC games.">
 <meta property="og:title" content="Kim Merer Levi | Unity Technical Artist">
 <meta property="og:description" content="I make games feel good to play. VFX, shaders, and UI animation for casual and hybrid-casual games.">
-<meta property="og:image" content="assets/Sigil%20hero%20poster.jpg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kimiky1.github.io/portfolio/">
+<meta property="og:image" content="https://kimiky1.github.io/portfolio/assets/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kim Merer Levi, Unity Technical Artist, with shots from shipped games">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kim Merer Levi | Unity Technical Artist">
+<meta name="twitter:description" content="I make games feel good to play. VFX, shaders, and UI animation for casual and hybrid-casual games.">
+<meta name="twitter:image" content="https://kimiky1.github.io/portfolio/assets/og-card.jpg">
+<link rel="canonical" href="https://kimiky1.github.io/portfolio/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0c0d0f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Unbounded:wght@700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -231,6 +245,10 @@
   }
 
   /* numbers band */
+  .about{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr); gap:24px 48px; align-items:start}
+  .about .h2{margin:0}
+  .about-lead{font:700 clamp(20px,2vw,26px)/1.35 var(--display); letter-spacing:-.01em; margin:0 0 16px; max-width:40ch}
+  @media(max-width:767px){ .about{grid-template-columns:1fr} }
   .stats{border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(137,207,240,.04), transparent)}
   .stats-row{display:grid; grid-template-columns:repeat(3,minmax(0,1fr))}
   .stat{padding:48px 24px 46px 0; display:flex; flex-direction:column; gap:10px}
@@ -367,6 +385,17 @@
       <div class="stat reveal"><b data-count="5">5</b><span>studios and publishers</span></div>
     </div>
   </div>
+
+  <!-- ABOUT -->
+  <section id="about" style="padding-bottom:0">
+    <div class="wrap about">
+      <h2 class="h2 reveal">About</h2>
+      <div class="reveal">
+        <p class="about-lead">I&rsquo;m Kim, a Unity technical artist. I sit between art and code: I build the effect, the shader or the UI flow, then make it run smoothly on a cheap phone.</p>
+        <p class="lede">I taught myself C# and Unity in 2022, and since then I&rsquo;ve shipped 23 games with WizPlay, Crazy Labs, Voodoo, Clover Bite and Hoppa Play, released my own game on Steam, and now art direct Sigilbound. Claude and Tripo 3D are part of my daily pipeline, so a feature gets from idea to playable fast and the time saved goes into polish. I care most about the few seconds a player remembers: the hit, the reward, the level clear.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- GAME BY GAME: newest first -->
   <section id="games">
@@ -621,6 +650,16 @@
                 <p class="gx-meta"><em>Voodoo</em><br>Technical artist</p>
                 <h3>Bag Legends</h3>
                 <p>A hero merge auto battler: drag heroes into your bag, merge them into stronger ones, and watch the fight. The clip shows a card summon, a dragon boss, the victory screen, a dungeon unlock and the talent wheel.</p>
+                <a class="btn" href="https://play.google.com/store/apps/details?id=com.ek.hoppa.brpg" target="_blank" rel="noopener">View on Google Play <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>All of the UI, from the bag and battle screens to the summon, talent wheel and dungeon screens</li>
+                  <li>UI/UX for every screen and flow</li>
+                  <li>UI animations and transitions</li>
+                  <li>The in-game VFX for heroes, merges, specials and bosses</li>
+                </ul>
               </div>
             </div>
           </article>
@@ -630,9 +669,20 @@
             <div class="gx-media"><video controls muted playsinline loop preload="none" poster="assets/scs/scs_breakdown.jpg" src="assets/scs/scs_breakdown.mp4"></video></div>
             <div class="gx-body">
               <div>
-                <p class="gx-meta"><em>In development</em> for Steam<br>Team project, three developers</p>
+                <p class="gx-meta"><em>Coming 2027</em> to Steam<br>Bad Goat Gaming, team project</p>
                 <h3>Scavenger Survivors</h3>
                 <p>A co-op survivors game for up to four players, all riding one shared rig that carries every weapon. Nine months in, built with a designer and a technical artist and story designer. The clip is a real four-player run: squad lock-in, level-up picks, the safehouse shop, an elite fight, the last stand and the mission report.</p>
+                <a class="btn primary" href="https://store.steampowered.com/app/4991630/Scavenger_Survivors/" target="_blank" rel="noopener">Wishlist on Steam <span class="arr">&nearr;</span></a>
+              </div>
+              <div>
+                <p class="did">What I did</p>
+                <ul class="gx-list">
+                  <li>All of the UI, from the menus to the four-player HUD, in uGUI</li>
+                  <li>UI/UX for every screen, from squad select to the mission report</li>
+                  <li>The in-game VFX</li>
+                  <li>Sound effects</li>
+                  <li>Part of the game design</li>
+                </ul>
               </div>
             </div>
           </article>
